@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -30,10 +31,19 @@ public class MainController {
 	@RequestMapping("/dashboard")
     public String dashboard(@ModelAttribute Event event, HttpSession session, Model model) {
     	Long id = (Long) session.getAttribute("userId");
-    	List<Event> allEvents = eventService.allEvents();
+    	
+    	System.out.println(id);
+    	
+    	
     	if(id != null) {
+    		List<Event> allEvents = eventService.allEvents();
     		User thisUser = userService.findUserById(id);
-    		
+    		Long thisId = thisUser.getId();
+    		System.out.println("this user "+thisId);
+    		List<Event> notMyEvents = eventService.eventsNotUser(thisUser);
+    		System.out.println(allEvents);
+        	System.out.println(notMyEvents);
+    		model.addAttribute("notMine", notMyEvents);
     		model.addAttribute("user", thisUser);
     		model.addAttribute("allEvents", allEvents);
     		
@@ -57,7 +67,49 @@ public class MainController {
 			return "dashboard.jsp";
 		} else {
 			eventService.createEvent(event);
+//			Long eventId = event.getId();
+//			Event newEvent = eventService.findEvent(eventId);
+//			Long userId = (Long) session.getAttribute("userId");
+//			eventService.updateEvent(userId, newEvent);
 			return "redirect:/dashboard";
 		}
+	}
+	
+	@RequestMapping("/joinEvent/{id}")
+	public String joinEvent(
+							@PathVariable("id") Long id, 
+							HttpSession session) {
+		Event event = eventService.findEvent(id);
+		Long userId = (Long) session.getAttribute("userId");
+		eventService.updateEvent(userId, event);
+		return "redirect:/dashboard";
+		
+	}
+	@RequestMapping("/remove/{id}")
+	public String leaveEvent(
+			@PathVariable("id") Long id, 
+			HttpSession session) {
+		Event event = eventService.findEvent(id);
+		Long userId = (Long) session.getAttribute("userId");
+		eventService.leaveEvent(userId, event);
+		return "redirect:/dashboard";
+		
+	}
+	@RequestMapping("/deleteEvent/{id}")
+	public String deleteEvent(
+			@PathVariable("id") Long id, 
+			HttpSession session) {
+		Event event = eventService.findEvent(id);
+		Long userId = (Long) session.getAttribute("userId");
+		if(event.getCreator().getId().equals(userId)) {
+			eventService.deleteEvent(event.getId());
+			System.out.println("Deleted: "+event.getName());
+			return "redirect:/dashboard";
+			
+		}
+		System.out.println("cant delete:  "+event.getName());
+		System.out.println("User ID: "+userId+"  Event creator ID: "+event.getCreator().getId());
+		return "redirect:/dashboard";
+		
 	}
 }

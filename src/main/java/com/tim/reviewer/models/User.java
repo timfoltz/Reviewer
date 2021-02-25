@@ -1,12 +1,18 @@
 package com.tim.reviewer.models;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -44,6 +50,21 @@ public class User {
 	private Date createdAt;
 	
 	private Date updatedAt;
+	
+	@OneToMany(mappedBy="creator", fetch=FetchType.LAZY)
+	private List<Event> createdEvents;
+	
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(
+				name="users_events",
+				joinColumns = @JoinColumn(name = "user_id"),
+				inverseJoinColumns = @JoinColumn(name = "event_id")
+			)
+	private List<Event> goingToEvent;
+	
+	
+	@OneToMany(mappedBy="comment", fetch=FetchType.LAZY)
+	private List<Message> createdComments;
 	
 	
 	public User() {
@@ -120,6 +141,18 @@ public class User {
 	}
 
 
+	public List<Event> getCreatedEvents() {
+		return createdEvents;
+	}
+
+
+	public void setCreatedEvents(List<Event> createdEvents) {
+		this.createdEvents = createdEvents;
+	}
+
+
+
+
 	public Date getCreatedAt() {
 		return createdAt;
 	}
@@ -139,7 +172,29 @@ public class User {
 		this.updatedAt = updatedAt;
 	}
 	
-	 @PrePersist
+	
+	
+	 public List<Message> getCreatedComments() {
+		return createdComments;
+	}
+
+
+	public void setCreatedComments(List<Message> createdComments) {
+		this.createdComments = createdComments;
+	}
+
+
+	public List<Event> getGoingToEvent() {
+		return goingToEvent;
+	}
+
+
+	public void setGoingToEvent(List<Event> goingToEvent) {
+		this.goingToEvent = goingToEvent;
+	}
+
+
+	@PrePersist
 	 protected void onCreate(){
     	this.createdAt = new Date();
     }

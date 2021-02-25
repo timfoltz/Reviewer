@@ -27,7 +27,12 @@ public class LoginController {
 	private UserValidator userValidator;
 	
     @RequestMapping("/")
-    public String registerForm(@ModelAttribute("user") User user) {
+    public String registerForm(@ModelAttribute("user") User user, HttpSession session) {
+    	Long id = (Long) session.getAttribute("userId");
+    	System.out.println(id);
+    	if(id != null) {
+    		return "redirect:/dashboard";
+    	}
         return "loginRegPage.jsp";
     }
 
@@ -59,7 +64,8 @@ public class LoginController {
     	
 	}
     @GetMapping("/login")
-    public String loginRouter() {
+    public String loginRouter(HttpSession session) {
+    	
     	return "redirect:/";
     }
     

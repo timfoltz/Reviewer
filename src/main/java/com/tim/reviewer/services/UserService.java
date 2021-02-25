@@ -1,11 +1,13 @@
 package com.tim.reviewer.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.tim.reviewer.models.Event;
 import com.tim.reviewer.models.User;
 import com.tim.reviewer.repos.UserRepo;
 
@@ -53,5 +55,10 @@ public class UserService {
             }
         }
     }
+//    public void updateUser(Long userId, Event event) {
+//    	List<Event> events = event.getGoers();
+//    	User newGoer = this.findUserById(userId);
+//    	events.add(newGoer);
+//    }
 }
 

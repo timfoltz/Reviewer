@@ -9,11 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 
 import com.tim.reviewer.models.Event;
 import com.tim.reviewer.models.User;
@@ -111,5 +112,44 @@ public class MainController {
 		System.out.println("User ID: "+userId+"  Event creator ID: "+event.getCreator().getId());
 		return "redirect:/dashboard";
 		
+	}
+	@GetMapping("/events/{id}/edit")
+	public String editEventForm(
+			@PathVariable("id") Long eventId,
+			HttpSession session,
+			Model model) {
+		Event thisEvent = eventService.findEvent(eventId);
+		if(session.getAttribute("userId").equals(thisEvent.getCreator().getId()))  {
+			User thisUser = userService.findUserById((Long) session.getAttribute("userId"));
+			
+			model.addAttribute("event", thisEvent);
+			model.addAttribute("user", thisUser);
+			return "editEvent.jsp";
+		}return "redirect:/dashboard";
+	}
+	@PutMapping("/events/edit/{id}")
+	public String editEvent(@Valid 
+							@ModelAttribute("event") Event event,
+							@PathVariable("id") Long eventId,
+							BindingResult result,
+							HttpSession session,
+							Model model) {
+		System.out.println("inside PUT");
+		Event thisEvent = eventService.findEvent(eventId);
+		if(result.hasErrors()) {
+			User thisUser = userService.findUserById((Long) session.getAttribute("userId"));
+			model.addAttribute("event", thisEvent);
+			model.addAttribute("user", thisUser);
+			return "editEvent.jsp";
+		}else {
+			eventService.editEvent(event);
+			return "redirect:/events/"+event.getId();
+		}
+		
+	}
+	@GetMapping("/events/{id}")
+	public String viewEvent() {
+		
+		return "showEvent.jsp";
 	}
 }

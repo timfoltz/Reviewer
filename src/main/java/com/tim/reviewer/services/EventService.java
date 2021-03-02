@@ -47,6 +47,9 @@ public class EventService {
 		goers.remove(going);
 		eventRepo.save(event);
 	}
+	public void editEvent(Event event) {
+		eventRepo.save(event);
+	}
 //	******Destroy/Delete******
 	public void deleteEvent(Long id) {
 		 

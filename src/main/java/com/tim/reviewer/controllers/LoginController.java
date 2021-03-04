@@ -1,5 +1,7 @@
 package com.tim.reviewer.controllers;
 
+import java.util.ArrayList;
+
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
@@ -27,13 +29,16 @@ public class LoginController {
 	private UserValidator userValidator;
 	
     @RequestMapping("/")
-    public String registerForm(@ModelAttribute("user") User user, HttpSession session) {
+    public String registerForm(@ModelAttribute("user") User user, HttpSession session, Model model) {
     	Long id = (Long) session.getAttribute("userId");
+    	ArrayList<String> emailList = (ArrayList<String>) userService.emailList();
     	System.out.println(id);
     	if(id != null) {
     		return "redirect:/dashboard";
+    	}else {
+    		model.addAttribute("allUsers", emailList);
+    		return "loginRegPage.jsp";
     	}
-        return "loginRegPage.jsp";
     }
 
     @GetMapping("/registration")
@@ -51,6 +56,7 @@ public class LoginController {
 							   @ModelAttribute("user") User user, 
 							   BindingResult result, HttpSession session) {
     	userValidator.validate(user,result);
+    	userValidator.emailValidate(user, result);
     	
     		
     		if(result.hasErrors()) {

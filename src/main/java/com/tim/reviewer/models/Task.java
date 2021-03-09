@@ -22,8 +22,8 @@ import javax.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-@Table(name="events")
-public class Event {
+@Table(name="tasks")
+public class Task {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -52,17 +52,17 @@ public class Event {
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
-			name="users_events",
+			name="users_tasks",
 			joinColumns = @JoinColumn(name="event_id"),
 			inverseJoinColumns = @JoinColumn(name="user_id")
 			)
-	private List<User> goers;
+	private List<User> assignees;
 	
 	@OneToMany(mappedBy="comment", fetch=FetchType.LAZY)
 	private List<Message> comments;
 	
 
-	public Event() {
+	public Task() {
 	}
 
 	public Long getId() {
@@ -139,19 +139,19 @@ public class Event {
 	}
 	
 	public List<User> getGoer() {
-		return goers;
+		return assignees;
 	}
 	
 	public void setGoer(List<User> goer) {
-		this.goers = goer;
+		this.assignees = goer;
 	}
 	
-	public List<User> getGoers() {
-		return goers;
+	public List<User> getAssignees() {
+		return assignees;
 	}
 	
-	public void setGoers(List<User> goers) {
-		this.goers = goers;
+	public void setAssignees(List<User> goers) {
+		this.assignees = goers;
 	}
 	
 	public List<Message> getComments() {

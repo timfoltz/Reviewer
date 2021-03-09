@@ -40,6 +40,8 @@ public class User {
 	
 	private String location;
 	
+	private List<String> roles;
+	
 	@Size(min=5, message="Password must be more than 4 characters")
 	private String password;
 	
@@ -52,7 +54,7 @@ public class User {
 	private Date updatedAt;
 	
 	@OneToMany(mappedBy="creator", fetch=FetchType.LAZY)
-	private List<Event> createdEvents;
+	private List<Task> createdEvents;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
@@ -60,7 +62,7 @@ public class User {
 				joinColumns = @JoinColumn(name = "user_id"),
 				inverseJoinColumns = @JoinColumn(name = "event_id")
 			)
-	private List<Event> goingToEvent;
+	private List<Task> goingToEvent;
 	
 	
 	@OneToMany(mappedBy="comment", fetch=FetchType.LAZY)
@@ -121,6 +123,16 @@ public class User {
 	}
 
 
+	public List<String> getRoles() {
+		return roles;
+	}
+
+
+	public void setRoles(List<String> roles) {
+		this.roles = roles;
+	}
+
+
 	public String getPassword() {
 		return password;
 	}
@@ -141,12 +153,12 @@ public class User {
 	}
 
 
-	public List<Event> getCreatedEvents() {
+	public List<Task> getCreatedEvents() {
 		return createdEvents;
 	}
 
 
-	public void setCreatedEvents(List<Event> createdEvents) {
+	public void setCreatedEvents(List<Task> createdEvents) {
 		this.createdEvents = createdEvents;
 	}
 
@@ -184,12 +196,12 @@ public class User {
 	}
 
 
-	public List<Event> getGoingToEvent() {
+	public List<Task> getGoingToEvent() {
 		return goingToEvent;
 	}
 
 
-	public void setGoingToEvent(List<Event> goingToEvent) {
+	public void setGoingToEvent(List<Task> goingToEvent) {
 		this.goingToEvent = goingToEvent;
 	}
 

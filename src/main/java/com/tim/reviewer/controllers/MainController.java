@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.tim.reviewer.models.Event;
+import com.tim.reviewer.models.Task;
 import com.tim.reviewer.models.User;
 import com.tim.reviewer.services.EventService;
 import com.tim.reviewer.services.UserService;
@@ -30,18 +30,18 @@ public class MainController {
 	private EventService eventService;
 	
 	@RequestMapping("/dashboard")
-    public String dashboard(@ModelAttribute Event event, HttpSession session, Model model) {
+    public String dashboard(@ModelAttribute Task event, HttpSession session, Model model) {
     	Long id = (Long) session.getAttribute("userId");
     	
     	System.out.println(id);
     	
     	
     	if(id != null) {
-    		List<Event> allEvents = eventService.allEvents();
+    		List<Task> allEvents = eventService.allEvents();
     		User thisUser = userService.findUserById(id);
     		Long thisId = thisUser.getId();
     		System.out.println("this user "+thisId);
-    		List<Event> notMyEvents = eventService.eventsNotUser(thisUser);
+    		List<Task> notMyEvents = eventService.eventsNotUser(thisUser);
     		System.out.println(allEvents);
         	System.out.println(notMyEvents);
     		model.addAttribute("notMine", notMyEvents);
@@ -57,7 +57,7 @@ public class MainController {
 	@PostMapping("/events")
 	public String newEvent(
 								@Valid 
-								@ModelAttribute Event event,
+								@ModelAttribute Task event,
 //								@PathVariable Long id,
 								Model model, 
 								BindingResult result,
@@ -69,7 +69,7 @@ public class MainController {
 		} else {
 			eventService.createEvent(event);
 //			Long eventId = event.getId();
-//			Event newEvent = eventService.findEvent(eventId);
+//			Task newEvent = eventService.findEvent(eventId);
 //			Long userId = (Long) session.getAttribute("userId");
 //			eventService.updateEvent(userId, newEvent);
 			return "redirect:/dashboard";
@@ -80,7 +80,7 @@ public class MainController {
 	public String joinEvent(
 							@PathVariable("id") Long id, 
 							HttpSession session) {
-		Event event = eventService.findEvent(id);
+		Task event = eventService.findEvent(id);
 		Long userId = (Long) session.getAttribute("userId");
 		eventService.updateEvent(userId, event);
 		return "redirect:/dashboard";
@@ -90,7 +90,7 @@ public class MainController {
 	public String leaveEvent(
 			@PathVariable("id") Long id, 
 			HttpSession session) {
-		Event event = eventService.findEvent(id);
+		Task event = eventService.findEvent(id);
 		Long userId = (Long) session.getAttribute("userId");
 		eventService.leaveEvent(userId, event);
 		return "redirect:/dashboard";
@@ -100,7 +100,7 @@ public class MainController {
 	public String deleteEvent(
 			@PathVariable("id") Long id, 
 			HttpSession session) {
-		Event event = eventService.findEvent(id);
+		Task event = eventService.findEvent(id);
 		Long userId = (Long) session.getAttribute("userId");
 		if(event.getCreator().getId().equals(userId)) {
 			eventService.deleteEvent(event.getId());
@@ -109,7 +109,7 @@ public class MainController {
 			
 		}
 		System.out.println("cant delete:  "+event.getName());
-		System.out.println("User ID: "+userId+"  Event creator ID: "+event.getCreator().getId());
+		System.out.println("User ID: "+userId+"  Task creator ID: "+event.getCreator().getId());
 		return "redirect:/dashboard";
 		
 	}
@@ -118,7 +118,7 @@ public class MainController {
 			@PathVariable("id") Long eventId,
 			HttpSession session,
 			Model model) {
-		Event thisEvent = eventService.findEvent(eventId);
+		Task thisEvent = eventService.findEvent(eventId);
 		if(session.getAttribute("userId").equals(thisEvent.getCreator().getId()))  {
 			User thisUser = userService.findUserById((Long) session.getAttribute("userId"));
 			
@@ -129,13 +129,13 @@ public class MainController {
 	}
 	@PutMapping("/events/edit/{id}")
 	public String editEvent(@Valid 
-							@ModelAttribute("event") Event event,
+							@ModelAttribute("event") Task event,
 							@PathVariable("id") Long eventId,
 							BindingResult result,
 							HttpSession session,
 							Model model) {
 		System.out.println("inside PUT");
-		Event thisEvent = eventService.findEvent(eventId);
+		Task thisEvent = eventService.findEvent(eventId);
 		if(result.hasErrors()) {
 			User thisUser = userService.findUserById((Long) session.getAttribute("userId"));
 			model.addAttribute("event", thisEvent);

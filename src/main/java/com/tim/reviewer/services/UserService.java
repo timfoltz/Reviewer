@@ -69,8 +69,8 @@ public class UserService {
 //    public List<String> findAllEmail() {
 //    	return userRepo.findEmail();
 //    }
-//    public void updateUser(Long userId, Event event) {
-//    	List<Event> events = event.getGoers();
+//    public void updateUser(Long userId, Task event) {
+//    	List<Task> events = event.getGoers();
 //    	User newGoer = this.findUserById(userId);
 //    	events.add(newGoer);
 //    }
